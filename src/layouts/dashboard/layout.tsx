@@ -22,6 +22,7 @@ import { HeaderSection } from '../core/header-section';
 import { AccountPopover } from '../components/account-popover';
 import { LanguagePopover } from '../components/language-popover';
 import { NotificationsPopover } from '../components/notifications-popover';
+import { useAuth } from 'src/context/auth-context/useAuth';
 
 // ----------------------------------------------------------------------
 
@@ -35,6 +36,8 @@ export type DashboardLayoutProps = {
 
 export function DashboardLayout({ sx, children, header }: DashboardLayoutProps) {
   const theme = useTheme();
+
+  const { userLoggedIn } = useAuth()
 
   const [navOpen, setNavOpen] = useState(false);
 
@@ -80,28 +83,32 @@ export function DashboardLayout({ sx, children, header }: DashboardLayoutProps) 
             ),
             rightArea: (
               <Box gap={1} display="flex" alignItems="center">
-                <Searchbar />
                 <LanguagePopover data={_langs} />
-                <NotificationsPopover data={_notifications} />
-                <AccountPopover
-                  data={[
-                    {
-                      label: 'Home',
-                      href: '/',
-                      icon: <Iconify width={22} icon="solar:home-angle-bold-duotone" />,
-                    },
-                    {
-                      label: 'Profile',
-                      href: '#',
-                      icon: <Iconify width={22} icon="solar:shield-keyhole-bold-duotone" />,
-                    },
-                    {
-                      label: 'Settings',
-                      href: '#',
-                      icon: <Iconify width={22} icon="solar:settings-bold-duotone" />,
-                    },
-                  ]}
-                />
+                {userLoggedIn ? (
+                  <>
+                    <NotificationsPopover data={_notifications} />
+                    <AccountPopover
+                      data={[
+                        {
+                          label: 'Home',
+                          href: '/',
+                          icon: <Iconify width={22} icon="solar:home-angle-bold-duotone" />,
+                        },
+                        {
+                          label: 'Profile',
+                          href: '#',
+                          icon: <Iconify width={22} icon="solar:shield-keyhole-bold-duotone" />,
+                        },
+                        {
+                          label: 'Settings',
+                          href: '#',
+                          icon: <Iconify width={22} icon="solar:settings-bold-duotone" />,
+                        },
+                      ]}
+                    />
+                  </>
+                ) : null}
+
               </Box>
             ),
           }}

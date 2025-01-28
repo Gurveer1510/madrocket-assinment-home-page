@@ -9,6 +9,8 @@ import { useScrollToTop } from 'src/hooks/use-scroll-to-top';
 import { ThemeProvider } from 'src/theme/theme-provider';
 
 import { Iconify } from 'src/components/iconify';
+import { AuthProvider } from './context/auth-context/AuthProvider';
+import { StudentsProvider } from './context/student-context/StudentProvider';
 
 // ----------------------------------------------------------------------
 
@@ -36,9 +38,13 @@ export default function App() {
   );
 
   return (
-    <ThemeProvider>
-      <Router />
-      {githubButton}
-    </ThemeProvider>
+    <AuthProvider>
+      <StudentsProvider>
+        <ThemeProvider>
+          <Router />
+          {githubButton}
+        </ThemeProvider>
+      </StudentsProvider>
+    </AuthProvider>
   );
 }

@@ -23,16 +23,17 @@ import { UserTableToolbar } from '../user-table-toolbar';
 import { emptyRows, applyFilter, getComparator } from '../utils';
 
 import type { UserProps } from '../user-table-row';
+import { useStudents } from 'src/context/student-context/StudentProvider';
 
 // ----------------------------------------------------------------------
 
 export function UserView() {
   const table = useTable();
+  const {students} = useStudents()
 
   const [filterName, setFilterName] = useState('');
-
   const dataFiltered: UserProps[] = applyFilter({
-    inputData: _users,
+    inputData: students,
     comparator: getComparator(table.order, table.orderBy),
     filterName,
   });
@@ -43,14 +44,17 @@ export function UserView() {
     <DashboardContent>
       <Box display="flex" alignItems="center" mb={5}>
         <Typography variant="h4" flexGrow={1}>
-          Users
+          <div>
+          Students
+          
+          </div>
         </Typography>
         <Button
           variant="contained"
           color="inherit"
           startIcon={<Iconify icon="mingcute:add-line" />}
         >
-          New user
+          New Student
         </Button>
       </Box>
 
@@ -80,12 +84,13 @@ export function UserView() {
                   )
                 }
                 headLabel={[
-                  { id: 'name', label: 'Name' },
-                  { id: 'company', label: 'Company' },
-                  { id: 'role', label: 'Role' },
-                  { id: 'isVerified', label: 'Verified', align: 'center' },
-                  { id: 'status', label: 'Status' },
-                  { id: '' },
+                  { id: 'first_name', label: 'First Name' },
+                  { id: 'last_name', label: 'Last Name' },
+                  {id: "age", label: "age"},
+                  { id: 'gender', label: 'Gender' },
+                  { id: 'city', label: 'City' },
+                  { id: 'country', label: 'Country' },
+                  { id: 'contact', label: "Contact" },
                 ]}
               />
               <TableBody>
@@ -96,10 +101,10 @@ export function UserView() {
                   )
                   .map((row) => (
                     <UserTableRow
-                      key={row.id}
+                      key={row.phone}
                       row={row}
-                      selected={table.selected.includes(row.id)}
-                      onSelectRow={() => table.onSelectRow(row.id)}
+                      selected={table.selected.includes(row.phone)}
+                      onSelectRow={() => table.onSelectRow(row.phone)}
                     />
                   ))}
 

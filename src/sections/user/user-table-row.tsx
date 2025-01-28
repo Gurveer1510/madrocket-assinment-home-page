@@ -12,18 +12,11 @@ import MenuItem, { menuItemClasses } from '@mui/material/MenuItem';
 
 import { Label } from 'src/components/label';
 import { Iconify } from 'src/components/iconify';
+import { Student } from 'src/types';
 
 // ----------------------------------------------------------------------
 
-export type UserProps = {
-  id: string;
-  name: string;
-  role: string;
-  status: string;
-  company: string;
-  avatarUrl: string;
-  isVerified: boolean;
-};
+export type UserProps = Student;
 
 type UserTableRowProps = {
   row: UserProps;
@@ -50,26 +43,29 @@ export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) 
         </TableCell>
 
         <TableCell component="th" scope="row">
-          <Box gap={2} display="flex" alignItems="center">
-            <Avatar alt={row.name} src={row.avatarUrl} />
-            {row.name}
-          </Box>
+          {row.first_name}
+        </TableCell>
+        <TableCell component="th" scope="row">
+          {row.last_name}
         </TableCell>
 
-        <TableCell>{row.company}</TableCell>
+        <TableCell align='left'>{row.age}</TableCell>
 
-        <TableCell>{row.role}</TableCell>
+        <TableCell align='left'>{row.gender}</TableCell>
 
-        <TableCell align="center">
-          {row.isVerified ? (
-            <Iconify width={22} icon="solar:check-circle-bold" sx={{ color: 'success.main' }} />
-          ) : (
-            '-'
-          )}
+        <TableCell align="left">
+          {row.city}
         </TableCell>
 
         <TableCell>
-          <Label color={(row.status === 'banned' && 'error') || 'success'}>{row.status}</Label>
+          {
+            row.country
+          }
+        </TableCell>
+        <TableCell>
+          {
+            row.phone
+          }
         </TableCell>
 
         <TableCell align="right">

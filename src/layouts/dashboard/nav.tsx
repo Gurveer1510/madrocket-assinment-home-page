@@ -5,10 +5,11 @@ import { useEffect } from 'react';
 import Box from '@mui/material/Box';
 import ListItem from '@mui/material/ListItem';
 import { useTheme } from '@mui/material/styles';
+import { Button } from '@mui/material';
 import ListItemButton from '@mui/material/ListItemButton';
 import Drawer, { drawerClasses } from '@mui/material/Drawer';
 
-import { usePathname } from 'src/routes/hooks';
+import { usePathname, useRouter } from 'src/routes/hooks';
 import { RouterLink } from 'src/routes/components';
 
 import { varAlpha } from 'src/theme/styles';
@@ -20,6 +21,9 @@ import { NavUpgrade } from '../components/nav-upgrade';
 import { WorkspacesPopover } from '../components/workspaces-popover';
 
 import type { WorkspacesPopoverProps } from '../components/workspaces-popover';
+import { useAuth } from 'src/context/auth-context/useAuth';
+import { doSignOut } from 'src/firebase/auth';
+import { Router } from 'src/routes/sections';
 
 // ----------------------------------------------------------------------
 
@@ -46,31 +50,37 @@ export function NavDesktop({
   layoutQuery,
 }: NavContentProps & { layoutQuery: Breakpoint }) {
   const theme = useTheme();
-
-  return (
-    <Box
-      sx={{
-        pt: 2.5,
-        px: 2.5,
-        top: 0,
-        left: 0,
-        height: 1,
-        display: 'none',
-        position: 'fixed',
-        flexDirection: 'column',
-        bgcolor: 'var(--layout-nav-bg)',
-        zIndex: 'var(--layout-nav-zIndex)',
-        width: 'var(--layout-nav-vertical-width)',
-        borderRight: `1px solid var(--layout-nav-border-color, ${varAlpha(theme.vars.palette.grey['500Channel'], 0.12)})`,
-        [theme.breakpoints.up(layoutQuery)]: {
-          display: 'flex',
-        },
-        ...sx,
-      }}
-    >
-      <NavContent data={data} slots={slots} workspaces={workspaces} />
-    </Box>
-  );
+  const router = useRouter()
+  const {userLoggedIn} = useAuth()
+  if(userLoggedIn) {
+    return (
+      <Box
+        sx={{
+          pt: 2.5,
+          px: 2.5,
+          top: 0,
+          left: 0,
+          height: 1,
+          display: 'none',
+          position: 'fixed',
+          flexDirection: 'column',
+          bgcolor: 'var(--layout-nav-bg)',
+          zIndex: 'var(--layout-nav-zIndex)',
+          width: 'var(--layout-nav-vertical-width)',
+          borderRight: `1px solid var(--layout-nav-border-color, ${varAlpha(theme.vars.palette.grey['500Channel'], 0.12)})`,
+          [theme.breakpoints.up(layoutQuery)]: {
+            display: 'flex',
+          },
+          ...sx,
+        }}
+      >
+        <NavContent data={data} slots={slots} workspaces={workspaces} />
+      </Box>
+    );
+  } else {
+    router.push("/sign-in")
+  }
+  
 }
 
 // ----------------------------------------------------------------------
@@ -116,6 +126,12 @@ export function NavMobile({
 
 export function NavContent({ data, slots, workspaces, sx }: NavContentProps) {
   const pathname = usePathname();
+  const router = useRouter()
+
+  const handleLogOut = () => {
+    doSignOut()
+    router.push("/sign-in")
+  }
 
   return (
     <>
@@ -123,7 +139,7 @@ export function NavContent({ data, slots, workspaces, sx }: NavContentProps) {
 
       {slots?.topArea}
 
-      <WorkspacesPopover data={workspaces} sx={{ my: 2 }} />
+      {/* <WorkspacesPopover data={workspaces} sx={{ my: 2 }} /> */}
 
       <Scrollbar fillContent>
         <Box component="nav" display="flex" flex="1 1 auto" flexDirection="column" sx={sx}>
@@ -170,13 +186,16 @@ export function NavContent({ data, slots, workspaces, sx }: NavContentProps) {
                 </ListItem>
               );
             })}
+            <Button onClick={handleLogOut} variant="outlined" color="error">
+              Log Out
+            </Button>
           </Box>
         </Box>
       </Scrollbar>
 
       {slots?.bottomArea}
 
-      <NavUpgrade />
+      {/* <NavUpgrade /> */}
     </>
   );
 }
