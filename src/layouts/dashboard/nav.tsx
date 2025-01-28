@@ -13,17 +13,13 @@ import { usePathname, useRouter } from 'src/routes/hooks';
 import { RouterLink } from 'src/routes/components';
 
 import { varAlpha } from 'src/theme/styles';
-
+import { doSignOut } from 'src/firebase/auth';
 import { Logo } from 'src/components/logo';
 import { Scrollbar } from 'src/components/scrollbar';
-
-import { NavUpgrade } from '../components/nav-upgrade';
-import { WorkspacesPopover } from '../components/workspaces-popover';
+import { useAuth } from 'src/context/auth-context/useAuth';
 
 import type { WorkspacesPopoverProps } from '../components/workspaces-popover';
-import { useAuth } from 'src/context/auth-context/useAuth';
-import { doSignOut } from 'src/firebase/auth';
-import { Router } from 'src/routes/sections';
+
 
 // ----------------------------------------------------------------------
 

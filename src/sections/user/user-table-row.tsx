@@ -1,18 +1,19 @@
 import { useState, useCallback } from 'react';
+import { deleteStudent } from 'src/db/db';
 
-import Box from '@mui/material/Box';
-import Avatar from '@mui/material/Avatar';
 import Popover from '@mui/material/Popover';
 import TableRow from '@mui/material/TableRow';
 import Checkbox from '@mui/material/Checkbox';
 import MenuList from '@mui/material/MenuList';
+import { Button } from '@mui/material';
 import TableCell from '@mui/material/TableCell';
 import IconButton from '@mui/material/IconButton';
 import MenuItem, { menuItemClasses } from '@mui/material/MenuItem';
-
-import { Label } from 'src/components/label';
 import { Iconify } from 'src/components/iconify';
 import { Student } from 'src/types';
+import { Router } from 'src/routes/sections';
+
+import { useRouter } from 'src/routes/hooks';
 
 // ----------------------------------------------------------------------
 
@@ -26,10 +27,18 @@ type UserTableRowProps = {
 
 export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) {
   const [openPopover, setOpenPopover] = useState<HTMLButtonElement | null>(null);
-
+  const router = useRouter()
   const handleOpenPopover = useCallback((event: React.MouseEvent<HTMLButtonElement>) => {
     setOpenPopover(event.currentTarget);
   }, []);
+
+  const handleDelete = async (docId: string) => {
+    if( await deleteStudent(docId)){
+      router.refresh()
+    } else{
+      alert("no")
+    }
+  }
 
   const handleClosePopover = useCallback(() => {
     setOpenPopover(null);
@@ -105,7 +114,11 @@ export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) 
 
           <MenuItem onClick={handleClosePopover} sx={{ color: 'error.main' }}>
             <Iconify icon="solar:trash-bin-trash-bold" />
-            Delete
+            <Button
+              onClick={() => handleDelete(row.docId!)}
+              color='error'>
+              Delete
+            </Button>
           </MenuItem>
         </MenuList>
       </Popover>

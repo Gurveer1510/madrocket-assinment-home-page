@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { db, collection, getDocs } from "../../firebase/firebase";
 import { Student } from "../../types";
 
@@ -21,15 +21,19 @@ export const StudentsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         const getStudents = async () => {
             const stud = collection(db, "students")
             const st = await getDocs(stud)
-            const stutList = st.docs.map(doc => doc.data())
+            const stutList = st.docs.map(doc => ({
+                ...doc.data(), // Get the document data
+                docId: doc.id, // Add the document ID
+            }));
             setStudents(stutList)
+            console.log(stutList)
             setLoading(false)
         }
         getStudents()
     }, []);
-
+    const contextValue = useMemo(() => ({ students, loading }), [students, loading]);
     return (
-        <StudentsContext.Provider value={{ students, loading }}>
+        <StudentsContext.Provider value={contextValue}>
             {children}
         </StudentsContext.Provider>
     );

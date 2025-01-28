@@ -7,4 +7,5 @@ export type Student = {
     last_name: string; // Last name of the user
     phone: string; // Phone number of the user
     zipcode: string; // Zipcode of the user's location
+    docId?: string
 };

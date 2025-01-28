@@ -15,6 +15,7 @@ import { DashboardContent } from 'src/layouts/dashboard';
 import { Iconify } from 'src/components/iconify';
 import { Scrollbar } from 'src/components/scrollbar';
 
+import { useStudents } from 'src/context/student-context/StudentProvider';
 import { TableNoData } from '../table-no-data';
 import { UserTableRow } from '../user-table-row';
 import { UserTableHead } from '../user-table-head';
@@ -23,13 +24,13 @@ import { UserTableToolbar } from '../user-table-toolbar';
 import { emptyRows, applyFilter, getComparator } from '../utils';
 
 import type { UserProps } from '../user-table-row';
-import { useStudents } from 'src/context/student-context/StudentProvider';
+import FormModal from 'src/modal/form-modal';
 
 // ----------------------------------------------------------------------
 
 export function UserView() {
   const table = useTable();
-  const {students} = useStudents()
+  const { students } = useStudents()
 
   const [filterName, setFilterName] = useState('');
   const dataFiltered: UserProps[] = applyFilter({
@@ -45,16 +46,20 @@ export function UserView() {
       <Box display="flex" alignItems="center" mb={5}>
         <Typography variant="h4" flexGrow={1}>
           <div>
-          Students
-          
+            Students
+
           </div>
         </Typography>
         <Button
-          variant="contained"
-          color="inherit"
-          startIcon={<Iconify icon="mingcute:add-line" />}
+          sx={{
+            backgroundColor: "#007BFF",
+            ":hover": {
+              backgroundColor: "#0056b3"
+            }
+          }}
+          color="inherit" 
         >
-          New Student
+          <FormModal />
         </Button>
       </Box>
 
@@ -86,7 +91,7 @@ export function UserView() {
                 headLabel={[
                   { id: 'first_name', label: 'First Name' },
                   { id: 'last_name', label: 'Last Name' },
-                  {id: "age", label: "age"},
+                  { id: "age", label: "age" },
                   { id: 'gender', label: 'Gender' },
                   { id: 'city', label: 'City' },
                   { id: 'country', label: 'Country' },
@@ -101,10 +106,10 @@ export function UserView() {
                   )
                   .map((row) => (
                     <UserTableRow
-                      key={row.phone}
+                      key={row.docId}
                       row={row}
-                      selected={table.selected.includes(row.phone)}
-                      onSelectRow={() => table.onSelectRow(row.phone)}
+                      selected={table.selected.includes(row.docId!)}
+                      onSelectRow={() => table.onSelectRow(row.docId!)}
                     />
                   ))}
 
@@ -137,7 +142,7 @@ export function UserView() {
 
 export function useTable() {
   const [page, setPage] = useState(0);
-  const [orderBy, setOrderBy] = useState('name');
+  const [orderBy, setOrderBy] = useState('first_name');
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [selected, setSelected] = useState<string[]>([]);
   const [order, setOrder] = useState<'asc' | 'desc'>('asc');
