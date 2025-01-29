@@ -36,8 +36,22 @@ const style = {
     boxShadow: 24,
     p: 4,
     borderRadius: 2,
-    overflow: "auto"
+    overflowY: "auto",
+    '&::-webkit-scrollbar': {
+        width: '0px', // Width of the scrollbar
+    },
+    '&::-webkit-scrollbar-track': {
+        background: '#f1f1f1', // Track color
+    },
+    '&::-webkit-scrollbar-thumb': {
+        background: '#888', // Thumb color
+        borderRadius: '10px', // Rounded thumb
+    },
+    '&::-webkit-scrollbar-thumb:hover': {
+        background: '#555', // Thumb hover color
+    }
 };
+
 
 const FormModal: React.FC = () => {
     const router = useRouter()
