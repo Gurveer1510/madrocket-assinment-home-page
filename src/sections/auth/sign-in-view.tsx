@@ -22,11 +22,6 @@ export function SignInView() {
   const [submitError, setSubmitError] = useState(null);
 
   const { userLoggedIn, currentUser, loading } = useAuth();
-
-  if (userLoggedIn) {
-    return <Navigate to="/" />;
-  }
-
   const {
     control,
     handleSubmit,
@@ -38,7 +33,7 @@ export function SignInView() {
     },
   });
 
-  const onSubmit = useCallback(async (data : {email: string, password: string}) => {
+  const onSubmit = useCallback(async (data: { email: string, password: string }) => {
     try {
       setSubmitError(null);
       await doSignInWithEmailAndPassword(data.email, data.password);
@@ -49,6 +44,10 @@ export function SignInView() {
     }
   }, [router]);
 
+  if (userLoggedIn) {
+    return <Navigate to="/" />;
+  }
+  
   const renderForm = (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Box display="flex" flexDirection="column" alignItems="flex-end">

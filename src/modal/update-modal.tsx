@@ -9,9 +9,11 @@ import {
     Backdrop,
     Fade,
 } from "@mui/material";
+import { Iconify } from "src/components/iconify";
 
 import { useRouter } from "src/routes/hooks";
-import { addDataWithAutoId } from "src/db/db";
+import { updateDocument } from "src/db/db";
+import { Student } from "src/types";
 
 type FormData = {
     first_name: string;
@@ -39,21 +41,22 @@ const style = {
     overflow: "auto"
 };
 
-const FormModal: React.FC = () => {
+interface UpdateModalProps {
+    docId : string
+    data: Student
+}
+
+const UpdateModal: React.FC<UpdateModalProps> = ({
+    docId,
+    data
+}) => {
     const router = useRouter()
     const [open, setOpen] = React.useState(false);
     const [error, setError] = useState("")
 
     const { handleSubmit, control, reset, formState: { errors } } = useForm<FormData>({
         defaultValues: {
-            first_name: "",
-            last_name: "",
-            age: 0,
-            city: "",
-            country: "",
-            gender: "",
-            phone: "",
-            zipcode: "",
+            ...data
         },
     });
 
@@ -63,8 +66,8 @@ const FormModal: React.FC = () => {
         reset(); // Reset the form on close
     };
 
-    const onSubmit = async (data: FormData) => {
-        if (await addDataWithAutoId(data)) {
+    const onSubmit = async (formData: FormData) => {
+        if (await updateDocument(formData, docId)) {
             router.refresh()
             handleClose(); // Close the modal on form submission
         } else {
@@ -77,15 +80,15 @@ const FormModal: React.FC = () => {
             <Button
 
                 sx={{
-                    color: "#FFFFFF",
-                    backgroundColor: "#007BFF",
+                    color: "#00000",
+                    backgroundColor: "#FFFF",
                     ":hover": {
-                        backgroundColor: "#0056b3"
+                        backgroundColor: "#F6F7F8"
                     }
                 }}
                 onClick={handleOpen}
             >
-                New Student
+                Edit
             </Button>
             <Modal
                 open={open}
@@ -271,7 +274,7 @@ const FormModal: React.FC = () => {
                                 fullWidth
                                 sx={{ mt: 2 }}
                             >
-                                Submit
+                                Update
                             </Button>
                         </form>
                     </Box>
@@ -281,4 +284,4 @@ const FormModal: React.FC = () => {
     );
 };
 
-export default FormModal;
+export default UpdateModal;

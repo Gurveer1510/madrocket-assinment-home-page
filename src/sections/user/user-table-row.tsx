@@ -11,9 +11,9 @@ import IconButton from '@mui/material/IconButton';
 import MenuItem, { menuItemClasses } from '@mui/material/MenuItem';
 import { Iconify } from 'src/components/iconify';
 import { Student } from 'src/types';
-import { Router } from 'src/routes/sections';
 
 import { useRouter } from 'src/routes/hooks';
+import UpdateModal from 'src/modal/update-modal';
 
 // ----------------------------------------------------------------------
 
@@ -33,9 +33,9 @@ export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) 
   }, []);
 
   const handleDelete = async (docId: string) => {
-    if( await deleteStudent(docId)){
+    if (await deleteStudent(docId)) {
       router.refresh()
-    } else{
+    } else {
       alert("no")
     }
   }
@@ -107,18 +107,14 @@ export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) 
             },
           }}
         >
-          <MenuItem onClick={handleClosePopover}>
-            <Iconify icon="solar:pen-bold" />
-            Edit
+          <MenuItem>
+            <Iconify icon="solar:pen-bold" color='#007BFF'/>
+            <UpdateModal docId={row.docId!} data={row}/>
           </MenuItem>
 
-          <MenuItem onClick={handleClosePopover} sx={{ color: 'error.main' }}>
+          <MenuItem onClick={() => handleDelete(row.docId!)} sx={{ color: 'error.main' }}>
             <Iconify icon="solar:trash-bin-trash-bold" />
-            <Button
-              onClick={() => handleDelete(row.docId!)}
-              color='error'>
-              Delete
-            </Button>
+            <Button color='error'>Delete</Button>
           </MenuItem>
         </MenuList>
       </Popover>

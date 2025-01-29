@@ -73,10 +73,7 @@ export function NavDesktop({
         <NavContent data={data} slots={slots} workspaces={workspaces} />
       </Box>
     );
-  } else {
-    router.push("/sign-in")
-  }
-  
+  } 
 }
 
 // ----------------------------------------------------------------------

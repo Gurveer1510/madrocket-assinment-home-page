@@ -17,6 +17,7 @@ import { useRouter, usePathname } from 'src/routes/hooks';
 import { _myAccount } from 'src/_mock';
 
 import { useAuth } from 'src/context/auth-context/useAuth';
+import { doSignOut } from 'src/firebase/auth';
 
 // ----------------------------------------------------------------------
 
@@ -129,7 +130,7 @@ export function AccountPopover({ data = [], sx, ...other }: AccountPopoverProps)
         <Divider sx={{ borderStyle: 'dashed' }} />
 
         <Box sx={{ p: 1 }}>
-          <Button fullWidth color="error" size="medium" variant="text">
+          <Button onClick={doSignOut} fullWidth color="error" size="medium" variant="text">
             Logout
           </Button>
         </Box>

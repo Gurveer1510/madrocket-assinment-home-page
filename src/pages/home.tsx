@@ -30,8 +30,6 @@ export default function Page() {
         <OverviewAnalyticsView />
       </>
     )
-  } else {
-    router.push("/sign-in")
   }
   
 }

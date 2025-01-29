@@ -44,7 +44,7 @@ export function Router() {
         </DashboardLayout>
       ),
       children: [
-        { element: <StudentPage />, index:true },
+        {element: <Suspense fallback={renderFallback}><StudentPage /></Suspense>, index: true },
       ],
     },
     {
