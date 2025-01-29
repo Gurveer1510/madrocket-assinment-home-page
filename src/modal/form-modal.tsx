@@ -8,6 +8,11 @@ import {
     Button,
     Backdrop,
     Fade,
+    Radio,
+    RadioGroup,
+    FormControl,
+    FormControlLabel,
+    FormLabel,
 } from "@mui/material";
 
 import { useRouter } from "src/routes/hooks";
@@ -52,11 +57,10 @@ const style = {
     }
 };
 
-
 const FormModal: React.FC = () => {
-    const router = useRouter()
+    const router = useRouter();
     const [open, setOpen] = React.useState(false);
-    const [error, setError] = useState("")
+    const [error, setError] = useState("");
 
     const { handleSubmit, control, reset, formState: { errors } } = useForm<FormData>({
         defaultValues: {
@@ -79,17 +83,16 @@ const FormModal: React.FC = () => {
 
     const onSubmit = async (data: FormData) => {
         if (await addDataWithAutoId(data)) {
-            router.refresh()
+            router.refresh();
             handleClose(); // Close the modal on form submission
         } else {
-            setError("Something went wrong!")
+            setError("Something went wrong!");
         }
     };
 
     return (
         <>
             <Button
-
                 sx={{
                     color: "#FFFFFF",
                     backgroundColor: "#007BFF",
@@ -218,21 +221,20 @@ const FormModal: React.FC = () => {
                                 )}
                             />
 
-                            {/* Gender Field */}
+                            {/* Gender Field (Radio Buttons for M/F) */}
                             <Controller
                                 name="gender"
                                 control={control}
                                 rules={{ required: "Gender is required" }}
                                 render={({ field }) => (
-                                    <TextField
-                                        {...field}
-                                        label="Gender"
-                                        variant="outlined"
-                                        fullWidth
-                                        margin="normal"
-                                        error={!!errors.gender}
-                                        helperText={errors.gender?.message}
-                                    />
+                                    <FormControl component="fieldset" error={!!errors.gender} fullWidth margin="normal">
+                                        <FormLabel component="legend">Gender</FormLabel>
+                                        <RadioGroup {...field}>
+                                            <FormControlLabel value="M" control={<Radio />} label="Male" />
+                                            <FormControlLabel value="F" control={<Radio />} label="Female" />
+                                        </RadioGroup>
+                                        {errors.gender && <Typography color="error">{errors.gender.message}</Typography>}
+                                    </FormControl>
                                 )}
                             />
 

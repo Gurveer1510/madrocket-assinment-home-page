@@ -8,8 +8,12 @@ import {
     Button,
     Backdrop,
     Fade,
+    Radio,
+    RadioGroup,
+    FormControl,
+    FormControlLabel,
+    FormLabel,
 } from "@mui/material";
-import { Iconify } from "src/components/iconify";
 
 import { useRouter } from "src/routes/hooks";
 import { updateDocument } from "src/db/db";
@@ -226,15 +230,14 @@ const UpdateModal: React.FC<UpdateModalProps> = ({
                                 control={control}
                                 rules={{ required: "Gender is required" }}
                                 render={({ field }) => (
-                                    <TextField
-                                        {...field}
-                                        label="Gender"
-                                        variant="outlined"
-                                        fullWidth
-                                        margin="normal"
-                                        error={!!errors.gender}
-                                        helperText={errors.gender?.message}
-                                    />
+                                    <FormControl component="fieldset" error={!!errors.gender} fullWidth margin="normal">
+                                        <FormLabel component="legend">Gender</FormLabel>
+                                        <RadioGroup {...field}>
+                                            <FormControlLabel value="M" control={<Radio />} label="Male" />
+                                            <FormControlLabel value="F" control={<Radio />} label="Female" />
+                                        </RadioGroup>
+                                        {errors.gender && <Typography color="error">{errors.gender.message}</Typography>}
+                                    </FormControl>
                                 )}
                             />
 
