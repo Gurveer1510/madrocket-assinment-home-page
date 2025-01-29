@@ -1,6 +1,6 @@
 import { Student } from "src/types";
 import { db,  } from "../firebase/firebase"
-import { collection, doc, deleteDoc } from "firebase/firestore";
+import { collection, doc, deleteDoc } from "firebase/firestore/lite";
 import { addDoc } from "firebase/firestore/lite";
 
 export const addDataWithAutoId = async (data: Student) => {
@@ -8,9 +8,9 @@ export const addDataWithAutoId = async (data: Student) => {
 
     try {
         const docRef = await addDoc(studentRef, data); // Adds a new document with an auto-generated ID
-        console.log('New document added with ID: ', docRef.id);
+        return true
     } catch (error) {
-        console.error('Error adding document: ', error);
+        return false
     }
 };
 
@@ -18,8 +18,8 @@ export const deleteStudent = async (docId: string) => {
     try {
         const docRef = doc(db, "students", docId); // Replace with your collection name
         await deleteDoc(docRef);
-        console.log("Document successfully deleted!");
+        return true
     } catch (error) {
-        console.error("Error deleting document: ", error);
+        return false
     }
 }

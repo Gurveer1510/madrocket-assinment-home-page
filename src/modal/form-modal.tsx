@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import {
     Modal,
@@ -42,6 +42,7 @@ const style = {
 const FormModal: React.FC = () => {
     const router = useRouter()
     const [open, setOpen] = React.useState(false);
+    const [error, setError] = useState("")
 
     const { handleSubmit, control, reset, formState: { errors } } = useForm<FormData>({
         defaultValues: {
@@ -62,17 +63,19 @@ const FormModal: React.FC = () => {
         reset(); // Reset the form on close
     };
 
-    const onSubmit = (data: FormData) => {
-        console.log("Form Data:", data);
-        addDataWithAutoId(data)
-        router.refresh()
-        handleClose(); // Close the modal on form submission
+    const onSubmit = async (data: FormData) => {
+        if (await addDataWithAutoId(data)) {
+            router.refresh()
+            handleClose(); // Close the modal on form submission
+        } else {
+            setError("Something went wrong!")
+        }
     };
 
     return (
         <>
             <Button
-                
+
                 sx={{
                     color: "#FFFFFF",
                     backgroundColor: "#007BFF",
@@ -95,6 +98,13 @@ const FormModal: React.FC = () => {
             >
                 <Fade in={open}>
                     <Box sx={style}>
+                        {
+                            error && (
+                                <Typography color={"error"}>
+                                    {error}
+                                </Typography>
+                            )
+                        }
                         <Typography variant="h6" component="h2" mb={2}>
                             Add a new student
                         </Typography>

@@ -26,7 +26,6 @@ export const StudentsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
                 docId: doc.id, // Add the document ID
             }));
             setStudents(stutList)
-            console.log(stutList)
             setLoading(false)
         }
         getStudents()
