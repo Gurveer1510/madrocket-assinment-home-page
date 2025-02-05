@@ -13,6 +13,7 @@ import {
     FormControl,
     FormControlLabel,
     FormLabel,
+    MenuItem
 } from "@mui/material";
 
 import { useRouter } from "src/routes/hooks";
@@ -27,6 +28,19 @@ type FormData = {
     gender: string;
     phone: string;
     zipcode: string;
+};
+
+type Country = 'US' | 'CA' | 'UK' | 'IN';
+
+const regexPatterns: Record<Country, RegExp> = {
+    // US: 5-digit code or 5+4 format (e.g., 12345 or 12345-6789)
+    US: /^\d{5}(-\d{4})?$/,
+    // Canada: Pattern for Canadian postal codes (e.g., A1A 1A1)
+    CA: /^[ABCEGHJ-NPRSTVXY]\d[ABCEGHJ-NPRSTV-Z][ -]?\d[ABCEGHJ-NPRSTV-Z]\d$/i,
+    // UK: Simplified pattern for UK postal codes (e.g., SW1A 1AA)
+    UK: /^([A-Z]{1,2}\d[A-Z\d]? ?\d[A-Z]{2})$/i,
+    // India: 6-digit PIN code where the first digit is non-zero (e.g., 110001)
+    IN: /^[1-9]\d{5}$/
 };
 
 const style = {
@@ -59,10 +73,7 @@ const style = {
 
 const FormModal: React.FC = () => {
     const router = useRouter();
-    const [open, setOpen] = React.useState(false);
-    const [error, setError] = useState("");
-
-    const { handleSubmit, control, reset, formState: { errors } } = useForm<FormData>({
+    const { handleSubmit, watch, control, reset, formState: { errors } } = useForm<FormData>({
         defaultValues: {
             first_name: "",
             last_name: "",
@@ -74,6 +85,11 @@ const FormModal: React.FC = () => {
             zipcode: "",
         },
     });
+    const [open, setOpen] = React.useState(false);
+    const [error, setError] = useState("");
+    const selectedCountry = watch('country');
+
+
 
     const handleOpen = () => setOpen(true);
     const handleClose = () => {
@@ -203,24 +219,6 @@ const FormModal: React.FC = () => {
                                 )}
                             />
 
-                            {/* Country Field */}
-                            <Controller
-                                name="country"
-                                control={control}
-                                rules={{ required: "Country is required" }}
-                                render={({ field }) => (
-                                    <TextField
-                                        {...field}
-                                        label="Country"
-                                        variant="outlined"
-                                        fullWidth
-                                        margin="normal"
-                                        error={!!errors.country}
-                                        helperText={errors.country?.message}
-                                    />
-                                )}
-                            />
-
                             {/* Gender Field (Radio Buttons for M/F) */}
                             <Controller
                                 name="gender"
@@ -261,12 +259,42 @@ const FormModal: React.FC = () => {
                                     />
                                 )}
                             />
-
-                            {/* Zipcode Field */}
+                            <Controller
+                                name="country"
+                                control={control}
+                                render={({ field }) => (
+                                    <TextField
+                                        {...field}
+                                        select
+                                        label="Country"
+                                        variant="outlined"
+                                        fullWidth
+                                        margin="normal"
+                                    >
+                                        <MenuItem value="US">United States</MenuItem>
+                                        <MenuItem value="CA">Canada</MenuItem>
+                                        <MenuItem value="UK">United Kingdom</MenuItem>
+                                        <MenuItem value="IN">India</MenuItem>
+                                    </TextField>
+                                )}
+                            />
                             <Controller
                                 name="zipcode"
                                 control={control}
-                                rules={{ required: "Zipcode is required" }}
+                                rules={{
+                                    required: "Zipcode is required",
+                                    // Custom validation using the selected country's regex pattern
+                                    validate: (value) => {
+                                        // If country is not selected or doesn't have a pattern, pass validation
+                                        const countryCode = selectedCountry as 'US' | 'CA' | 'UK' | 'IN';
+                                        // Test the input value against the regex for the selected country
+                                        return (
+                                            regexPatterns[countryCode].test(value) ||
+                                            // Provide a custom error message if validation fails
+                                            `Invalid zipcode/postal code format for ${selectedCountry}`
+                                        );
+                                    }
+                                }}
                                 render={({ field }) => (
                                     <TextField
                                         {...field}
@@ -276,9 +304,22 @@ const FormModal: React.FC = () => {
                                         margin="normal"
                                         error={!!errors.zipcode}
                                         helperText={errors.zipcode?.message}
+                                        // Optionally, update the placeholder dynamically based on the selected country
+                                        placeholder={
+                                            selectedCountry === 'US'
+                                                ? "12345 or 12345-6789"
+                                                : selectedCountry === 'CA'
+                                                    ? "A1A 1A1"
+                                                    : selectedCountry === 'UK'
+                                                        ? "SW1A 1AA"
+                                                        : selectedCountry === 'IN'
+                                                            ? "110001"
+                                                            : ""
+                                        }
                                     />
                                 )}
                             />
+
 
                             {/* Submit Button */}
                             <Button

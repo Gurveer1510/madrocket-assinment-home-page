@@ -76,6 +76,11 @@ export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) 
             row.phone
           }
         </TableCell>
+        <TableCell>
+          {
+            row.zipcode
+          }
+        </TableCell>
 
         <TableCell align="right">
           <IconButton onClick={handleOpenPopover}>

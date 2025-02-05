@@ -95,6 +95,7 @@ export function UserView() {
                   { id: 'city', label: 'City' },
                   { id: 'country', label: 'Country' },
                   { id: 'contact', label: "Contact" },
+                  { id: 'zipcode', label: 'Zipcode' },
                 ]}
               />
               <TableBody>
