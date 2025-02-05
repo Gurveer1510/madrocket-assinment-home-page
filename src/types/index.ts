@@ -8,4 +8,8 @@ export type Student = {
     phone: string; // Phone number of the user
     zipcode: string; // Zipcode of the user's location
     docId?: string
+    enrollmentNumber: string;
+    classGrade: string
+    email: string
+    parentName: string
 };

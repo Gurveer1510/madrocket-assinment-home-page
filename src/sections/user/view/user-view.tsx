@@ -42,7 +42,7 @@ export function UserView() {
 
   return (
     <DashboardContent>
-      <Box display="flex" alignItems="center" mb={5}>
+      <Box  display="flex" alignItems="center" mb={5}>
         <Typography variant="h4" flexGrow={1}>
           <div>
             Students
@@ -96,6 +96,10 @@ export function UserView() {
                   { id: 'country', label: 'Country' },
                   { id: 'contact', label: "Contact" },
                   { id: 'zipcode', label: 'Zipcode' },
+                  { id: 'enroll', label: 'Enroll. No.' },
+                  { id: 'email', label: 'Email' },
+                  { id: 'class', label: 'Class' },
+                  { id: 'gaurdian', label: 'Gaurdian' },
                 ]}
               />
               <TableBody>

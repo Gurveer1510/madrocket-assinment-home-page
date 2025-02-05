@@ -13,22 +13,14 @@ import {
     FormControl,
     FormControlLabel,
     FormLabel,
-} from "@mui/material"; 
+    MenuItem
+} from "@mui/material";
 
 import { useRouter } from "src/routes/hooks";
 import { updateDocument } from "src/db/db";
 import { Student } from "src/types";
 
-type FormData = {
-    first_name: string;
-    last_name: string;
-    age: number;
-    city: string;
-    country: string;
-    gender: string;
-    phone: string;
-    zipcode: string;
-};
+import { regexPatterns, countryRegexPatterns } from "src/regex";
 
 const style = {
     position: "absolute" as const,
@@ -70,20 +62,24 @@ const UpdateModal: React.FC<UpdateModalProps> = ({
     const router = useRouter()
     const [open, setOpen] = React.useState(false);
     const [error, setError] = useState("")
-
-    const { handleSubmit, control, reset, formState: { errors } } = useForm<FormData>({
+    const { handleSubmit, watch, control, reset, formState: { errors } } = useForm<Student>({
         defaultValues: {
             ...data
         },
     });
+    const selectedCountry = watch('country');
 
-    const handleOpen = () => setOpen(true);
+
+    const handleOpen = () => {
+        console.log(data)
+        setOpen(true);
+    }
     const handleClose = () => {
         setOpen(false);
         reset(); // Reset the form on close
     };
 
-    const onSubmit = async (formData: FormData) => {
+    const onSubmit = async (formData: Student) => {
         if (await updateDocument(formData, docId)) {
             router.refresh()
             handleClose(); // Close the modal on form submission
@@ -265,11 +261,38 @@ const UpdateModal: React.FC<UpdateModalProps> = ({
                                 )}
                             />
 
-                            {/* Zipcode Field */}
+                            <Controller
+                                name="country"
+                                control={control}
+                                render={({ field }) => (
+                                    <TextField
+                                        {...field}
+                                        select
+                                        label="Country"
+                                        variant="outlined"
+                                        fullWidth
+                                        margin="normal"
+                                    >
+                                        <MenuItem value="US">United States</MenuItem>
+                                        <MenuItem value="CA">Canada</MenuItem>
+                                        <MenuItem value="UK">United Kingdom</MenuItem>
+                                        <MenuItem value="IN">India</MenuItem>
+                                    </TextField>
+                                )}
+                            />
                             <Controller
                                 name="zipcode"
                                 control={control}
-                                rules={{ required: "Zipcode is required" }}
+                                rules={{
+                                    required: "Zipcode is required",
+                                    validate: (value) => {
+                                        const countryCode = selectedCountry as 'US' | 'CA' | 'UK' | 'IN';
+                                        return (
+                                            countryRegexPatterns[countryCode].test(value) ||
+                                            `Invalid zipcode/postal code format for ${selectedCountry}`
+                                        );
+                                    }
+                                }}
                                 render={({ field }) => (
                                     <TextField
                                         {...field}
@@ -279,6 +302,114 @@ const UpdateModal: React.FC<UpdateModalProps> = ({
                                         margin="normal"
                                         error={!!errors.zipcode}
                                         helperText={errors.zipcode?.message}
+                                        // Optionally, update the placeholder dynamically based on the selected country
+                                        placeholder={
+                                            selectedCountry === 'US'
+                                                ? "12345 or 12345-6789"
+                                                : selectedCountry === 'CA'
+                                                    ? "A1A 1A1"
+                                                    : selectedCountry === 'UK'
+                                                        ? "SW1A 1AA"
+                                                        : selectedCountry === 'IN'
+                                                            ? "110001"
+                                                            : ""
+                                        }
+                                    />
+                                )}
+                            />
+
+                            <Controller
+                                name="enrollmentNumber"
+                                control={control}
+                                rules={{
+                                    required: "Enrollment Number is required",
+                                    pattern: {
+                                        value: regexPatterns.enrollmentNumber,
+                                        message: "Only alphanumeric characters are allowed",
+                                    },
+                                }}
+                                render={({ field }) => (
+                                    <TextField
+                                        {...field}
+                                        label="Enrollment Number"
+                                        variant="outlined"
+                                        fullWidth
+                                        margin="normal"
+                                        error={!!errors.enrollmentNumber}
+                                        helperText={errors.enrollmentNumber?.message}
+                                    />
+                                )}
+                            />
+
+                            {/* Class/Grade */}
+                            <Controller
+                                name="classGrade"
+                                control={control}
+                                rules={{
+                                    required: "Class/Grade is required",
+                                    pattern: {
+                                        value: regexPatterns.classGrade,
+                                        message: "Invalid class/grade format",
+                                    },
+                                }}
+                                render={({ field }) => (
+                                    <TextField
+                                        {...field}
+                                        label="Class/Grade"
+                                        variant="outlined"
+                                        fullWidth
+                                        margin="normal"
+                                        error={!!errors.classGrade}
+                                        helperText={errors.classGrade?.message}
+                                    />
+                                )}
+                            />
+
+                            {/* Email */}
+                            <Controller
+                                name="email"
+                                control={control}
+                                rules={{
+                                    required: "Email is required",
+                                    pattern: {
+                                        value: regexPatterns.email,
+                                        message: "Invalid email format",
+                                    },
+                                }}
+                                render={({ field }) => (
+                                    <TextField
+                                        {...field}
+                                        label="Email"
+                                        type="email"
+                                        variant="outlined"
+                                        fullWidth
+                                        margin="normal"
+                                        error={!!errors.email}
+                                        helperText={errors.email?.message}
+                                    />
+                                )}
+                            />
+
+                            {/* Parent/Guardian Name */}
+                            <Controller
+                                name="parentName"
+                                control={control}
+                                rules={{
+                                    required: "Parent/Guardian Name is required",
+                                    pattern: {
+                                        value: regexPatterns.parentName,
+                                        message: "Only alphabetic characters and spaces allowed",
+                                    },
+                                }}
+                                render={({ field }) => (
+                                    <TextField
+                                        {...field}
+                                        label="Parent/Guardian Name"
+                                        variant="outlined"
+                                        fullWidth
+                                        margin="normal"
+                                        error={!!errors.parentName}
+                                        helperText={errors.parentName?.message}
                                     />
                                 )}
                             />

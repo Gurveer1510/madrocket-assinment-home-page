@@ -28,7 +28,6 @@ export function Main({ children, sx, ...other }: BoxProps) {
   );
 }
 
-// ----------------------------------------------------------------------
 
 type DashboardContentProps = ContainerProps & {
   disablePadding?: boolean;

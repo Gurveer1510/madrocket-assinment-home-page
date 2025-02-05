@@ -81,8 +81,28 @@ export function UserTableRow({ row, selected, onSelectRow }: UserTableRowProps) 
             row.zipcode
           }
         </TableCell>
+        <TableCell>
+          {
+            row.enrollmentNumber
+          }
+        </TableCell>
+        <TableCell>
+          {
+            row.email
+          }
+        </TableCell>
+        <TableCell>
+          {
+            row.classGrade
+          }
+        </TableCell>
+        <TableCell>
+          {
+            row.parentName
+          }
+        </TableCell>
 
-        <TableCell align="right">
+        <TableCell align="right" sx={{border: "2px solid green"}}>
           <IconButton onClick={handleOpenPopover}>
             <Iconify icon="eva:more-vertical-fill" />
           </IconButton>

@@ -19,29 +19,9 @@ import {
 import { useRouter } from "src/routes/hooks";
 import { addDataWithAutoId } from "src/db/db";
 
-type FormData = {
-    first_name: string;
-    last_name: string;
-    age: number;
-    city: string;
-    country: string;
-    gender: string;
-    phone: string;
-    zipcode: string;
-};
+import { Student } from "src/types";
 
-type Country = 'US' | 'CA' | 'UK' | 'IN';
-
-const regexPatterns: Record<Country, RegExp> = {
-    // US: 5-digit code or 5+4 format (e.g., 12345 or 12345-6789)
-    US: /^\d{5}(-\d{4})?$/,
-    // Canada: Pattern for Canadian postal codes (e.g., A1A 1A1)
-    CA: /^[ABCEGHJ-NPRSTVXY]\d[ABCEGHJ-NPRSTV-Z][ -]?\d[ABCEGHJ-NPRSTV-Z]\d$/i,
-    // UK: Simplified pattern for UK postal codes (e.g., SW1A 1AA)
-    UK: /^([A-Z]{1,2}\d[A-Z\d]? ?\d[A-Z]{2})$/i,
-    // India: 6-digit PIN code where the first digit is non-zero (e.g., 110001)
-    IN: /^[1-9]\d{5}$/
-};
+import { regexPatterns, countryRegexPatterns } from "src/regex";
 
 const style = {
     position: "absolute" as const,
@@ -73,7 +53,7 @@ const style = {
 
 const FormModal: React.FC = () => {
     const router = useRouter();
-    const { handleSubmit, watch, control, reset, formState: { errors } } = useForm<FormData>({
+    const { handleSubmit, watch, control, reset, formState: { errors } } = useForm<Student>({
         defaultValues: {
             first_name: "",
             last_name: "",
@@ -89,15 +69,13 @@ const FormModal: React.FC = () => {
     const [error, setError] = useState("");
     const selectedCountry = watch('country');
 
-
-
     const handleOpen = () => setOpen(true);
     const handleClose = () => {
         setOpen(false);
         reset(); // Reset the form on close
     };
 
-    const onSubmit = async (data: FormData) => {
+    const onSubmit = async (data: Student) => {
         if (await addDataWithAutoId(data)) {
             router.refresh();
             handleClose(); // Close the modal on form submission
@@ -114,7 +92,8 @@ const FormModal: React.FC = () => {
                     backgroundColor: "#007BFF",
                     ":hover": {
                         backgroundColor: "#0056b3"
-                    }
+                    },
+                    // marginRight: "20px"
                 }}
                 onClick={handleOpen}
             >
@@ -283,14 +262,10 @@ const FormModal: React.FC = () => {
                                 control={control}
                                 rules={{
                                     required: "Zipcode is required",
-                                    // Custom validation using the selected country's regex pattern
                                     validate: (value) => {
-                                        // If country is not selected or doesn't have a pattern, pass validation
                                         const countryCode = selectedCountry as 'US' | 'CA' | 'UK' | 'IN';
-                                        // Test the input value against the regex for the selected country
                                         return (
-                                            regexPatterns[countryCode].test(value) ||
-                                            // Provide a custom error message if validation fails
+                                            countryRegexPatterns[countryCode].test(value) ||
                                             `Invalid zipcode/postal code format for ${selectedCountry}`
                                         );
                                     }
@@ -320,7 +295,101 @@ const FormModal: React.FC = () => {
                                 )}
                             />
 
+                            <Controller
+                                name="enrollmentNumber"
+                                control={control}
+                                rules={{
+                                    required: "Enrollment Number is required",
+                                    pattern: {
+                                        value: regexPatterns.enrollmentNumber,
+                                        message: "Only alphanumeric characters are allowed",
+                                    },
+                                }}
+                                render={({ field }) => (
+                                    <TextField
+                                        {...field}
+                                        label="Enrollment Number"
+                                        variant="outlined"
+                                        fullWidth
+                                        margin="normal"
+                                        error={!!errors.enrollmentNumber}
+                                        helperText={errors.enrollmentNumber?.message}
+                                    />
+                                )}
+                            />
 
+                            {/* Class/Grade */}
+                            <Controller
+                                name="classGrade"
+                                control={control}
+                                rules={{
+                                    required: "Class/Grade is required",
+                                    pattern: {
+                                        value: regexPatterns.classGrade,
+                                        message: "Invalid class/grade format",
+                                    },
+                                }}
+                                render={({ field }) => (
+                                    <TextField
+                                        {...field}
+                                        label="Class/Grade"
+                                        variant="outlined"
+                                        fullWidth
+                                        margin="normal"
+                                        error={!!errors.classGrade}
+                                        helperText={errors.classGrade?.message}
+                                    />
+                                )}
+                            />
+
+                            {/* Email */}
+                            <Controller
+                                name="email"
+                                control={control}
+                                rules={{
+                                    required: "Email is required",
+                                    pattern: {
+                                        value: regexPatterns.email,
+                                        message: "Invalid email format",
+                                    },
+                                }}
+                                render={({ field }) => (
+                                    <TextField
+                                        {...field}
+                                        label="Email"
+                                        type="email"
+                                        variant="outlined"
+                                        fullWidth
+                                        margin="normal"
+                                        error={!!errors.email}
+                                        helperText={errors.email?.message}
+                                    />
+                                )}
+                            />
+
+                            {/* Parent/Guardian Name */}
+                            <Controller
+                                name="parentName"
+                                control={control}
+                                rules={{
+                                    required: "Parent/Guardian Name is required",
+                                    pattern: {
+                                        value: regexPatterns.parentName,
+                                        message: "Only alphabetic characters and spaces allowed",
+                                    },
+                                }}
+                                render={({ field }) => (
+                                    <TextField
+                                        {...field}
+                                        label="Parent/Guardian Name"
+                                        variant="outlined"
+                                        fullWidth
+                                        margin="normal"
+                                        error={!!errors.parentName}
+                                        helperText={errors.parentName?.message}
+                                    />
+                                )}
+                            />
                             {/* Submit Button */}
                             <Button
                                 type="submit"
