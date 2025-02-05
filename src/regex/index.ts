@@ -3,7 +3,7 @@ type Country = 'US' | 'CA' | 'UK' | 'IN';
 const regexPatterns = {
     enrollmentNumber: /^[A-Za-z0-9]+$/, // Alphanumeric ID
     classGrade: /^[0-9A-Za-z\s]+$/, // Supports numbers & letters
-    email: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/, // Basic email regex
+    email: /^[\w.-]+@([\w-]+\.)+[\w-]{2,4}$/, // Fixed email regex
     parentName: /^[A-Za-z\s]+$/ // Only alphabets & spaces
   };
 
